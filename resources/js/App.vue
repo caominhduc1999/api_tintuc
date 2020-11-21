@@ -1,13 +1,13 @@
 <template>
-    <div>
-        <h1>hello</h1>
-        <button class="btn btn-danger">hello</button>
-    </div>
+    <main>
+        <router-view></router-view>
+        <FlashMessage position="right bottom"></FlashMessage>
+    </main>
 </template>
 
 <script>
     export default {
-        name: "App"
+        name: "App",
     }
 </script>
 

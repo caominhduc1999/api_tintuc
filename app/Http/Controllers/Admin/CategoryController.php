@@ -8,19 +8,11 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function getAll()
+    public function index()
     {
-        $categories = Category::all();
+        $categories = Category::orderBy('created_at', 'desc')->get();
         return response()->json([
            'data' => $categories
-        ], 200);
-    }
-
-    public function get($id)
-    {
-        $category = Category::find($id);
-        return response()->json([
-            'data' => $category
         ], 200);
     }
 
@@ -28,31 +20,47 @@ class CategoryController extends Controller
     {
         $category = new Category();
         $category->name = $request->name;
-        $category->save();
 
-        return response()->json([
-            'data' => $category
-        ], 201);
+        if ($category->save()){
+            return response()->json([
+                'data' => $category
+            ], 201);
+        }else{
+            return response()->json([
+                'message'   =>  'Some errors occurred. Please try again !',
+                'status_code'   =>  500
+            ], 500);
+        }
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Category $category)
     {
-        $category = Category::find($id);
         $category->name = $request->name;
-        $category->save();
 
-        return response()->json([
-            'data' => $category
-        ], 200);
+        if ($category->save()){
+            return response()->json([
+                'data' => $category
+            ], 200);
+        }else{
+            return response()->json([
+                'message'   =>  'Some errors occurred. Please try again !',
+                'status_code'   =>  500
+            ], 500);
+        }
     }
 
-    public function destroy($id)
+    public function destroy(Category $category)
     {
-        $category = Category::find($id);
-        $category->delete();
-
-        return response()->json([
-           null
-        ], 204);
+        if($category->delete()){
+            return response()->json([
+                'message'   =>  'Category deleted successfully !',
+                'status_code'   =>  204
+            ], 204);
+        }else{
+            return response()->json([
+                'message'   =>  'Some errors occurred. Please try again !',
+                'status_code'   =>  500
+            ], 500);
+        }
     }
 }
