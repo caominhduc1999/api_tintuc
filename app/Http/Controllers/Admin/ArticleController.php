@@ -19,6 +19,13 @@ class ArticleController extends Controller
         ], 200);
     }
 
+    public function show(Article $article)
+    {
+        return response()->json([
+            'data' => $article
+        ], 200);
+    }
+
     public function store(Request $request)
     {
         $article = new Article();
@@ -94,6 +101,28 @@ class ArticleController extends Controller
         $categories = Category::all();
         return response()->json([
             'data' => $categories
+        ], 200);
+    }
+
+    public function getArticleByCategory($id)
+    {
+        $articles = Article::where('category_id', $id)->get();
+        return response()->json([
+            'data' => $articles
+        ], 200);
+    }
+
+    public function getLatestArticle() {
+        $articles = Article::orderBy('id', 'desc')->take(3)->get();
+        return response()->json([
+            'data' => $articles
+        ], 200);
+    }
+
+    public function getRandomArticle() {
+        $articles = Article::all()->random(3);
+        return response()->json([
+            'data' => $articles
         ], 200);
     }
 }

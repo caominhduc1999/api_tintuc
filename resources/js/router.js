@@ -4,6 +4,9 @@ import Home from './views/admin/Home';
 import Dashboard from './views/admin/Dashboard';
 import Categories from './views/admin/Categories';
 import Articles from './views/admin/Articles';
+import Index from './views/client/Index';
+import ClientCategories from "./views/client/ClientCategories";
+import ClientArticle from "./views/client/ClientArticle";
 
 Vue.use(Router);
 
@@ -26,8 +29,23 @@ const routes = [
                 path: 'articles',
                 name: 'articles',
                 component: Articles
-            },
+            }
         ]
+    },
+    {
+        path: '/index',
+        name: 'index',
+        component: Index,
+    },
+    {
+        path: '/categories',
+        name: 'clientCategories',
+        component: ClientCategories,
+    },
+    {
+        path: '/articles/:id',
+        name: 'clientArticle',
+        component: ClientArticle,
     },
     // {
     //     path: '/register',

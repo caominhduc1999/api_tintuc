@@ -22,3 +22,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::resource('categories', 'Admin\CategoryController');
 Route::resource('articles', 'Admin\ArticleController');
 Route::get('get-categories', 'Admin\ArticleController@categories');
+Route::get('get-article-by-category/{id}', 'Admin\ArticleController@getArticleByCategory');
+Route::get('get-latest-articles', 'Admin\ArticleController@getLatestArticle');
+Route::get('get-random-articles', 'Admin\ArticleController@getRandomArticle');
