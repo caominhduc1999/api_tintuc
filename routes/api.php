@@ -18,10 +18,20 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::group(['middleware' => 'jwt.verify'], function ($router) {
+    Route::resource('categories', 'Admin\CategoryController');
+    Route::resource('articles', 'Admin\ArticleController');
+    Route::get('get-categories', 'Admin\ArticleController@categories');
+    Route::get('get-article-by-category/{id}', 'Admin\ArticleController@getArticleByCategory');
+    Route::get('get-latest-articles', 'Admin\ArticleController@getLatestArticle');
+    Route::get('get-random-articles', 'Admin\ArticleController@getRandomArticle');
+});
 
-Route::resource('categories', 'Admin\CategoryController');
-Route::resource('articles', 'Admin\ArticleController');
-Route::get('get-categories', 'Admin\ArticleController@categories');
-Route::get('get-article-by-category/{id}', 'Admin\ArticleController@getArticleByCategory');
-Route::get('get-latest-articles', 'Admin\ArticleController@getLatestArticle');
-Route::get('get-random-articles', 'Admin\ArticleController@getRandomArticle');
+Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
+    Route::post('login', 'AuthController@login');
+    Route::post('register', 'AuthController@register');
+    Route::post('logout', 'AuthController@logout');
+    Route::post('refresh', 'AuthController@refresh');
+    Route::post('me', 'AuthController@me');
+
+});

@@ -7,8 +7,10 @@ import store from './store';
 
 import BootstrapVue from 'bootstrap-vue';
 import FlashMessage from '@smartweb/vue-flash-message';
+import VueSpinners from 'vue-spinners';
 Vue.use(BootstrapVue);
 Vue.use(FlashMessage);
+Vue.use(VueSpinners);
 
 const app = new Vue({
     el: '#app',

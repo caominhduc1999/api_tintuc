@@ -1,32 +1,63 @@
 <template>
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <a class="navbar-brand" href="index.html">Dashboard</a><button class="btn btn-link btn-sm order-1 order-lg-0" id="sidebarToggle" href="#"><i class="fas fa-bars"></i></button
-    ><!-- Navbar Search-->
-        <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
-            <div class="input-group">
-                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" />
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
-                </div>
+        <div class="input-group">
+            <div class="input-group-append" v-if="!token">
+                <router-link to="/register">
+                    <button class="btn btn-success" type="button">Register</button>
+                </router-link>
             </div>
-        </form>
-        <!-- Navbar-->
-        <ul class="navbar-nav ml-auto ml-md-0">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="userDropdown" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <a class="dropdown-item" href="#">Settings</a><a class="dropdown-item" href="#">Activity Log</a>
-                    <div class="dropdown-divider"></div>
-                    <button class="dropdown-item" >Logout</button>
-                </div>
-            </li>
-        </ul>
+            <div class="input-group-append" v-if="!token">
+                <router-link to="/login">
+                    <button class="btn btn-info" type="button">Login</button>
+                </router-link>
+            </div>
+            <div class="input-group-append" v-if="token">
+                <button class="btn btn-danger" type="button" v-on:click.prevent="logout">Logout</button>
+            </div>
+        </div>
     </nav>
 </template>
 
 <script>
     export default {
-        name: "Header"
+        name: "Header",
+        data() {
+            return {
+                token: '',
+            }
+        },
+
+        computed: {
+            loggedIn()
+            {
+                return this.$store.getters.get_loggedIn
+            }
+        },
+
+        mounted() {
+            this.checkUserStatus()
+        },
+
+        methods: {
+            checkUserStatus() {
+                if (localStorage.getItem('token') != null) {
+                    this.token = localStorage.getItem('token')
+                }
+            },
+
+            logout() {
+                // this.$store.dispatch('logout')
+                //     .then(res => {
+                //         this.$router.push('/login')
+                //     })
+                //     .catch(err => {
+                //         console.log(err)
+                //     })
+                localStorage.removeItem('token')
+                localStorage.removeItem('user')
+                this.$router.push('/login')
+            }
+        }
     }
 </script>
 

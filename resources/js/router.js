@@ -7,6 +7,8 @@ import Articles from './views/admin/Articles';
 import Index from './views/client/Index';
 import ClientCategories from "./views/client/ClientCategories";
 import ClientArticle from "./views/client/ClientArticle";
+import Register from "./views/admin/Register";
+import Login from "./views/admin/Login";
 
 Vue.use(Router);
 
@@ -30,7 +32,10 @@ const routes = [
                 name: 'articles',
                 component: Articles
             }
-        ]
+        ],
+        meta: {
+            secure: true
+        }
     },
     {
         path: '/index',
@@ -47,21 +52,22 @@ const routes = [
         name: 'clientArticle',
         component: ClientArticle,
     },
-    // {
-    //     path: '/register',
-    //     name: 'register',
-    //     component: Register
-    // },
-    // {
-    //     path: '/login',
-    //     name: 'login',
-    //     component: Login,
-    // },
-    // {
-    //     path: '/reset-password',
-    //     name: 'reset-password',
-    //     component: ResetPassword
-    // },
+    {
+        path: '/register',
+        name: 'register',
+        component: Register,
+        meta: {
+            guest: true
+        }
+    },
+    {
+        path: '/login',
+        name: 'login',
+        component: Login,
+        meta: {
+            guest: true
+        }
+    },
     // {
     //     path: '*',
     //     name: '404',
@@ -73,6 +79,28 @@ const router = new Router({
     mode: 'history',
     routes: routes,
     linkActiveClass: 'active'
+})
+
+router.beforeEach((to, from, next) => {
+    if (to.matched.some(record => record.meta.secure)) {
+        if (localStorage.getItem('token') == null) {
+            next({
+                path: '/login'
+            })
+        } else {
+            next();
+        }
+    } else if (to.matched.some(record => record.meta.guest)) {
+        if (localStorage.getItem('token') == null) {
+            next();
+        } else {
+            next({
+                path: '/home'
+            });
+        }
+    } else {
+        next();
+    }
 })
 
 export default router;
