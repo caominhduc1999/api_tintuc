@@ -28,6 +28,14 @@ class ArticleController extends Controller
 
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'title' => 'required',
+            'summary' => 'required',
+            'content' => 'required',
+            'category_id' => 'required',
+            'image'   =>  'required|image|mimes:jpg,png,jpeg',
+        ]);
+
         $article = new Article();
         $article->title = $request->title;
         $article->slug = Str::slug($request->title);
@@ -51,6 +59,14 @@ class ArticleController extends Controller
 
     public function update(Request $request, Article $article)
     {
+        $this->validate($request, [
+            'title' => 'required',
+            'summary' => 'required',
+            'content' => 'required',
+            'category_id' => 'required',
+            'image'   =>  'image|mimes:jpg,png,jpeg',
+        ]);
+
         $article->title = $request->title;
         $article->slug = Str::slug($request->title);
         $article->summary = $request->summary;
