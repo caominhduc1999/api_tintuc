@@ -22,7 +22,9 @@ class CreateArticlesTable extends Migration
             $table->text('image');
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('categories');
-            $table->unsignedBigInteger('views');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->unsignedBigInteger('views')->default(0);
             $table->timestamps();
         });
     }

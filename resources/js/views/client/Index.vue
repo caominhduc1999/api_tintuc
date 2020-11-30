@@ -25,9 +25,18 @@
                 <div class="row nomargin">
                     <div class="span12">
                         <div class="headnav">
-                            <ul>
-                                <li><a href="#mySignup" data-toggle="modal"><i class="icon-user"></i> Sign up</a></li>
-                                <li><a href="#mySignin" data-toggle="modal">Sign in</a></li>
+                            <ul v-show="user == null" style="display: flex;">
+                                <router-link to="/register" class="nav-link" exact>
+                                    <li><a data-toggle="modal"><i class="icon-user"></i> Sign up</a></li>
+                                </router-link>
+                                <router-link to="/login" class="nav-link" exact>
+                                    <li><a data-toggle="modal">Sign in</a></li>
+                                </router-link>
+                            </ul>
+                            <ul v-show="user != null" style="display: flex;">
+                                <router-link to="/home" class="nav-link" exact>
+                                    <li><i class="icon-user"></i><a data-toggle="modal">Hello {{ user.name }}</a></li>
+                                </router-link>
                             </ul>
                         </div>
                         <!-- Signup Modal -->
@@ -141,12 +150,12 @@
                                     <ul class="nav topnav" style="display: flex">
                                         <router-link to="/index" class="nav-link" exact>
                                             <li class="dropdown active">
-                                                <a href="">Home </a>
+                                                <a href="" style="font-size: 20px">Home </a>
                                             </li>
                                         </router-link>
                                         <router-link to="/categories" class="nav-link" exact>
                                             <li class="dropdown active">
-                                                <a href="">Categories </a>
+                                                <a href="" style="font-size: 20px">Categories </a>
                                             </li>
                                         </router-link>
                                     </ul>
@@ -163,13 +172,8 @@
             <!-- start slider -->
             <!-- Slider -->
             <div id="nivo-slider">
-                <div class="nivo-slider">
-                    <!-- Slide #1 image -->
-                    <img src="../../../../public/assets/img/slides/nivo/bg-1.jpg" alt="" title="#caption-1" />
-                    <!-- Slide #2 image -->
-                    <img src="../../../../public/assets/img/slides/nivo/bg-2.jpg" alt="" title="#caption-2" />
-                    <!-- Slide #3 image -->
-                    <img src="../../../../public/assets/img/slides/nivo/bg-3.jpg" alt="" title="#caption-3" />
+                <div class="">
+                    <img src="../../../../public/assets/img/slides/nivo/bg-4.jpg" alt="" title="#caption-1" />
                 </div>
                 <div class="container">
                     <div class="row">
@@ -209,22 +213,6 @@
                 </div>
             </div>
             <!-- end slider -->
-        </section>
-        <section class="callaction">
-            <div class="container">
-                <div class="row">
-                    <div class="span12">
-                        <div class="big-cta">
-                            <div class="cta-text">
-                                <h3>We've created more than <span class="highlight"><strong>5000 websites</strong></span> this year!</h3>
-                            </div>
-                            <div class="cta floatright">
-                                <a class="btn btn-large btn-theme btn-rounded" href="#">Request a quote</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </section>
         <section id="content">
             <div class="container">
@@ -301,98 +289,24 @@
                 <!-- Portfolio Projects -->
                 <div class="row">
                     <div class="span12">
-                        <h4 class="heading">Some of recent <strong>works</strong></h4>
+                        <h4 class="heading">Some of hot <strong>News</strong></h4>
                         <div class="row">
                             <section id="projects">
                                 <ul id="thumbs" class="portfolio">
-                                    <!-- Item Project and Filter Name -->
-                                    <li class="item-thumbs span3 design" data-id="id-0" data-type="web">
-                                        <!-- Fancybox - Gallery Enabled - Title - Full Image -->
-                                        <a class="hover-wrap fancybox" data-fancybox-group="gallery" title="The City" href="../../../../public/assets/img/works/full/image-01-full.jpg">
-                                            <span class="overlay-img"></span>
-                                            <span class="overlay-img-thumb font-icon-plus"></span>
-                                        </a>
-                                        <!-- Thumb Image and Description -->
-                                        <img src="../../../../public/assets/img/works/thumbs/image-01.jpg" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus quis elementum odio. Curabitur pellentesque, dolor vel pharetra mollis.">
+                                    <li v-for="(article, index) in articles" class="item-thumbs span3 design" data-id="id-0" data-type="web">
+                                        <router-link :to="`/articles/${article.id}`" class="nav-link" exact>
+                                        <!--<a class="hover-wrap fancybox" data-fancybox-group="gallery" title="The City" style="cursor: pointer">-->
+                                            <!--<span class="overlay-img"></span>-->
+                                            <!--<span class="overlay-img-thumb font-icon-eye"></span>-->
+                                        <!--</a>-->
+
+                                        <img v-bind:src="`${$store.state.serverPath}/storage/${article.image}`" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus quis elementum odio. Curabitur pellentesque, dolor vel pharetra mollis.">
+                                        <p style="font-weight: bold">{{ article.title }}</p>
+                                        </router-link>
                                     </li>
-                                    <!-- End Item Project -->
-                                    <!-- Item Project and Filter Name -->
-                                    <li class="item-thumbs span3 design" data-id="id-1" data-type="icon">
-                                        <!-- Fancybox - Gallery Enabled - Title - Full Image -->
-                                        <a class="hover-wrap fancybox" data-fancybox-group="gallery" title="The Office" href="../../../../public/assets/img/works/full/image-02-full.jpg">
-                                            <span class="overlay-img"></span>
-                                            <span class="overlay-img-thumb font-icon-plus"></span>
-                                        </a>
-                                        <!-- Thumb Image and Description -->
-                                        <img src="../../../../public/assets/img/works/thumbs/image-02.jpg" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus quis elementum odio. Curabitur pellentesque, dolor vel pharetra mollis.">
-                                    </li>
-                                    <!-- End Item Project -->
-                                    <!-- Item Project and Filter Name -->
-                                    <li class="item-thumbs span3 photography" data-id="id-2" data-type="illustrator">
-                                        <!-- Fancybox - Gallery Enabled - Title - Full Image -->
-                                        <a class="hover-wrap fancybox" data-fancybox-group="gallery" title="The Mountains" href="../../../../public/assets/img/works/full/image-03-full.jpg">
-                                            <span class="overlay-img"></span>
-                                            <span class="overlay-img-thumb font-icon-plus"></span>
-                                        </a>
-                                        <!-- Thumb Image and Description -->
-                                        <img src="../../../../public/assets/img/works/thumbs/image-03.jpg" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus quis elementum odio. Curabitur pellentesque, dolor vel pharetra mollis.">
-                                    </li>
-                                    <!-- End Item Project -->
-                                    <!-- Item Project and Filter Name -->
-                                    <li class="item-thumbs span3 photography" data-id="id-2" data-type="illustrator">
-                                        <!-- Fancybox - Gallery Enabled - Title - Full Image -->
-                                        <a class="hover-wrap fancybox" data-fancybox-group="gallery" title="The Mountains" href="../../../../public/assets/img/works/full/image-04-full.jpg">
-                                            <span class="overlay-img"></span>
-                                            <span class="overlay-img-thumb font-icon-plus"></span>
-                                        </a>
-                                        <!-- Thumb Image and Description -->
-                                        <img src="../../../../public/assets/img/works/thumbs/image-04.jpg" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus quis elementum odio. Curabitur pellentesque, dolor vel pharetra mollis.">
-                                    </li>
-                                    <!-- End Item Project -->
-                                    <!-- Item Project and Filter Name -->
-                                    <li class="item-thumbs span3 photography" data-id="id-4" data-type="web">
-                                        <!-- Fancybox - Gallery Enabled - Title - Full Image -->
-                                        <a class="hover-wrap fancybox" data-fancybox-group="gallery" title="The Sea" href="../../../../public/assets/img/works/full/image-05-full.jpg">
-                                            <span class="overlay-img"></span>
-                                            <span class="overlay-img-thumb font-icon-plus"></span>
-                                        </a>
-                                        <!-- Thumb Image and Description -->
-                                        <img src="../../../../public/assets/img/works/thumbs/image-05.jpg" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus quis elementum odio. Curabitur pellentesque, dolor vel pharetra mollis.">
-                                    </li>
-                                    <!-- End Item Project -->
-                                    <!-- Item Project and Filter Name -->
-                                    <li class="item-thumbs span3 photography" data-id="id-5" data-type="icon">
-                                        <!-- Fancybox - Gallery Enabled - Title - Full Image -->
-                                        <a class="hover-wrap fancybox" data-fancybox-group="gallery" title="Clouds" href="../../../../public/assets/img/works/full/image-06-full.jpg">
-                                            <span class="overlay-img"></span>
-                                            <span class="overlay-img-thumb font-icon-plus"></span>
-                                        </a>
-                                        <!-- Thumb Image and Description -->
-                                        <img src="../../../../public/assets/img/works/thumbs/image-06.jpg" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus quis elementum odio. Curabitur pellentesque, dolor vel pharetra mollis.">
-                                    </li>
-                                    <!-- End Item Project -->
-                                    <!-- Item Project and Filter Name -->
-                                    <li class="item-thumbs span3 photography" data-id="id-2" data-type="illustrator">
-                                        <!-- Fancybox - Gallery Enabled - Title - Full Image -->
-                                        <a class="hover-wrap fancybox" data-fancybox-group="gallery" title="The Mountains" href="../../../../public/assets/img/works/full/image-07-full.jpg">
-                                            <span class="overlay-img"></span>
-                                            <span class="overlay-img-thumb font-icon-plus"></span>
-                                        </a>
-                                        <!-- Thumb Image and Description -->
-                                        <img src="../../../../public/assets/img/works/thumbs/image-07.jpg" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus quis elementum odio. Curabitur pellentesque, dolor vel pharetra mollis.">
-                                    </li>
-                                    <!-- End Item Project -->
-                                    <!-- Item Project and Filter Name -->
-                                    <li class="item-thumbs span3 design" data-id="id-0" data-type="web">
-                                        <!-- Fancybox - Gallery Enabled - Title - Full Image -->
-                                        <a class="hover-wrap fancybox" data-fancybox-group="gallery" title="The Dark" href="../../../../public/assets/img/works/full/image-08-full.jpg">
-                                            <span class="overlay-img"></span>
-                                            <span class="overlay-img-thumb font-icon-plus"></span>
-                                        </a>
-                                        <!-- Thumb Image and Description -->
-                                        <img src="../../../../public/assets/img/works/thumbs/image-08.jpg" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus quis elementum odio. Curabitur pellentesque, dolor vel pharetra mollis.">
-                                    </li>
-                                    <!-- End Item Project -->
+                                    <div class="text-center" v-show="moreExists">
+                                        <button class="btn btn-small btn-theme btn-rounded" style="color: white" v-on:click="getHottestArticles"><span class="fa fa-arrow-down"></span>Load More</button>
+                                    </div>
                                 </ul>
                             </section>
                         </div>
@@ -471,6 +385,16 @@
                                     <img src="../../../../public/assets/img/dummies/clients/client6.png" class="client-logo" alt="" />
                                 </a>
                             </li>
+                            <li>
+                                <a href="#">
+                                    <img src="../../../../public/assets/img/dummies/clients/client6.png" class="client-logo" alt="" />
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <img src="../../../../public/assets/img/dummies/clients/client6.png" class="client-logo" alt="" />
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -517,7 +441,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="span3">
+                    <div class="span2">
                         <div class="widget">
                             <h5 class="widgetheading">Flickr photostream</h5>
                             <div class="flickr_badge">
@@ -578,8 +502,42 @@
 </template>
 
 <script>
+    import * as articleService from '../../services/article_service.js';
+
     export default {
-        name: 'index'
+        name: 'index',
+        data(){
+            return {
+                user: '',
+                articles: [],
+                moreExists: false,
+                nextPage: 0,
+            }
+        },
+
+        mounted() {
+            this.user = JSON.parse(localStorage.getItem('user'))
+            this.getHottestArticles()
+        },
+
+        methods: {
+            getHottestArticles : async function() {
+                // const response = await articleService.getHottestArticle();
+                // this.articles = response.data.data;
+
+                const response = await articleService.getHottestArticle(this.nextPage)
+                if (response.data.data.current_page < response.data.data.last_page){
+                    this.moreExists = true;
+                    this.nextPage = response.data.data.current_page + 1;
+                }else{
+                    this.moreExists = false;
+                }
+
+                response.data.data.data.forEach(data => {
+                    this.articles.push(data)
+                })
+            }
+        }
     }
 </script>
 

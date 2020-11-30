@@ -8,6 +8,10 @@ export function loadCategories() {
     return http().get('/categories')
 }
 
+export function searchCategories(data) {
+    return http().post('/search-categories', data)
+}
+
 export function deleteCategory(id) {
     return http().delete(`/categories/${id}`);
 }

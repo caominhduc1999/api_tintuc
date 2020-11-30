@@ -9,6 +9,8 @@ import ClientCategories from "./views/client/ClientCategories";
 import ClientArticle from "./views/client/ClientArticle";
 import Register from "./views/admin/Register";
 import Login from "./views/admin/Login";
+import Tags from "./views/admin/Tags";
+import Users from "./views/admin/Users";
 
 Vue.use(Router);
 
@@ -31,6 +33,16 @@ const routes = [
                 path: 'articles',
                 name: 'articles',
                 component: Articles
+            },
+            {
+                path: 'tags',
+                name: 'tags',
+                component: Tags
+            },
+            {
+                path: 'users',
+                name: 'users',
+                component: Users
             }
         ],
         meta: {

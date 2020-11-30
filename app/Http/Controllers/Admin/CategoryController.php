@@ -10,7 +10,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::orderBy('created_at', 'desc')->get();
+        $categories = Category::orderBy('created_at', 'desc')->paginate(10);
         return response()->json([
            'data' => $categories
         ], 200);
@@ -70,5 +70,14 @@ class CategoryController extends Controller
                 'status_code'   =>  500
             ], 500);
         }
+    }
+
+    public function search(Request $request)
+    {
+        $name = $request->name;
+        $categories = Category::where('name', 'like', '%'.$name.'%')->get();
+        return response()->json([
+            'data' => $categories
+        ], 200);
     }
 }

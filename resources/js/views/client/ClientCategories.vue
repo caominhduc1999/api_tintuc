@@ -24,9 +24,18 @@
                 <div class="row nomargin">
                     <div class="span12">
                         <div class="headnav">
-                            <ul>
-                                <li><a href="#mySignup" data-toggle="modal"><i class="icon-user"></i> Sign up</a></li>
-                                <li><a href="#mySignin" data-toggle="modal">Sign in</a></li>
+                            <ul v-show="user == null" style="display: flex;">
+                                <router-link to="/register" class="nav-link" exact>
+                                    <li><a data-toggle="modal"><i class="icon-user"></i> Sign up</a></li>
+                                </router-link>
+                                <router-link to="/login" class="nav-link" exact>
+                                    <li><a data-toggle="modal">Sign in</a></li>
+                                </router-link>
+                            </ul>
+                            <ul v-show="user != null" style="display: flex;">
+                                <router-link to="/home" class="nav-link" exact>
+                                    <li><i class="icon-user"></i><a data-toggle="modal">Hello {{ user.name }}</a></li>
+                                </router-link>
                             </ul>
                         </div>
                         <!-- Signup Modal -->
@@ -140,12 +149,12 @@
                                     <ul class="nav topnav" style="display: flex">
                                         <router-link to="/index" class="nav-link" exact>
                                             <li class="dropdown active">
-                                                <a href="">Home </a>
+                                                <a href="" style="font-size: 20px">Home </a>
                                             </li>
                                         </router-link>
                                         <router-link to="/categories" class="nav-link" exact>
                                             <li class="dropdown active">
-                                                <a href="">Categories </a>
+                                                <a href="" style="font-size: 20px">Categories </a>
                                             </li>
                                         </router-link>
                                     </ul>
@@ -190,8 +199,9 @@
                                     <div class="bottom-article">
                                         <ul class="meta-post">
                                             <li><i class="icon-calendar"></i><a href="#"> {{ moment(article.created_at).format("DD-MM-YYYY") }}</a></li>
-                                            <li><i class="icon-user"></i><a href="#"> Admin</a></li>
-                                            <li><i class="icon-folder-open"></i><a href="#"> Blog</a></li>
+                                            <li><i class="icon-user"></i><a style="cursor: pointer" v-on:click="getArticleByUser(article.user.id)">Author: {{ article.user.name }} / {{ article.user.email }}</a></li>
+                                            <li><i class="icon-book"></i><a href="#">Views: {{ article.views }}</a></li>
+                                            <li><i class="icon-tags"></i><a style="cursor: pointer" v-for="(tag, index) in article.tags" v-on:click="getArticleByTag(tag.id)">{{ tag.name }}, </a></li>
                                         </ul>
                                         <router-link :to="`articles/${article.id}`" class="nav-link" exact v-on:click.native="scrollToTop">
                                             <a href="" class="pull-right">Continue reading <i class="icon-angle-right"></i></a>
@@ -200,7 +210,11 @@
                                 </div>
                             </div>
                         </article>
+                        <div class="text-center" v-show="moreExists">
+                            <button class="btn btn-sm btn-danger" v-on:click="getMostViewArticle"><span class="fa fa-arrow-down"></span>Load More...</button>
+                        </div>
                     </div>
+
                     <div class="span3">
                         <aside class="right-sidebar">
                             <div class="widget">
@@ -216,9 +230,9 @@
                                 </ul>
                             </div>
                             <div class="widget">
-                                <h5 class="widgetheading">Latest articles</h5>
+                                <h5 class="widgetheading">Most View </h5>
                                 <ul class="recent">
-                                    <li v-for="(article, index) in latestArticle">
+                                    <li v-for="(article, index) in mostViewArticle">
                                         <router-link :to="`/articles/${article.id}`" class="nav-link" exact v-on:click.native="scrollToTop">
                                             <img v-bind:src="`${$store.state.serverPath}/storage/${article.image}`" class="pull-left" alt="" />
                                             <h6><a href="">{{ article.title }}</a></h6>
@@ -229,12 +243,7 @@
                             <div class="widget">
                                 <h5 class="widgetheading">Popular tags</h5>
                                 <ul class="tags">
-                                    <li><a href="#">Web design</a></li>
-                                    <li><a href="#">Trends</a></li>
-                                    <li><a href="#">Technology</a></li>
-                                    <li><a href="#">Internet</a></li>
-                                    <li><a href="#">Tutorial</a></li>
-                                    <li><a href="#">Development</a></li>
+                                    <li v-for="(tag, index) in tags" :key="index"><a style="cursor: pointer" v-on:click="getArticleByTag(tag.id)">{{ tag.name }}</a></li>
                                 </ul>
                             </div>
                         </aside>
@@ -278,7 +287,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="span3">
+                    <div class="span2">
                         <div class="widget">
                             <h5 class="widgetheading">Get in touch with us</h5>
                             <address>
@@ -339,15 +348,21 @@
             return {
                 categories: [],
                 articles: [],
-                latestArticle: [],
+                tags: [],
+                mostViewArticle: [],
+                user: '',
+                moreExists: false,
+                nextPage: 0,
                 moment: moment
             }
         },
 
         mounted(){
             this.loadCategories();
-            this.getRandomArticle();
+            this.loadTags();
+            this.getMostViewArticle();
             this.getLatestArticle();
+            this.user = JSON.parse(localStorage.getItem('user'))
         },
 
         methods: {
@@ -356,19 +371,43 @@
                 this.categories = response.data.data;
             },
 
+            loadTags : async function(){
+                const response = await articleService.loadTags();
+                this.tags = response.data.data;
+            },
+
             getArticleByCategory: async function(id){
                 const response = await articleService.getArticleByCategory(id);
                 this.articles = response.data.data;
             },
 
-            getRandomArticle: async function(){
-                const response = await articleService.getRandomArticle();
+            getArticleByUser: async function(id){
+                const response = await articleService.getArticleByUser(id);
                 this.articles = response.data.data;
             },
 
+            getArticleByTag: async function(id){
+                const response = await articleService.getArticleByTag(id);
+                this.articles = response.data.data;
+            },
+
+            getMostViewArticle: async function(){
+                const response = await articleService.getMostViewArticle();
+                this.mostViewArticle = response.data.data;
+            },
+
             getLatestArticle: async function(){
-                const response = await articleService.getLatestArticle();
-                this.latestArticle = response.data.data;
+                const response = await articleService.getLatestArticle(this.nextPage)
+                if (response.data.data.current_page < response.data.data.last_page) {
+                    this.moreExists = true;
+                    this.nextPage = response.data.data.current_page + 1;
+                } else {
+                    this.moreExists = false;
+                }
+
+                response.data.data.data.forEach(data => {
+                    this.articles.push(data)
+                })
             },
 
             scrollToTop() {

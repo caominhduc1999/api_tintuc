@@ -25,9 +25,18 @@
                 <div class="row nomargin">
                     <div class="span12">
                         <div class="headnav">
-                            <ul>
-                                <li><a href="#mySignup" data-toggle="modal"><i class="icon-user"></i> Sign up</a></li>
-                                <li><a href="#mySignin" data-toggle="modal">Sign in</a></li>
+                            <ul v-show="user == null" style="display: flex;">
+                                <router-link to="/register" class="nav-link" exact>
+                                    <li><a data-toggle="modal"><i class="icon-user"></i> Sign up</a></li>
+                                </router-link>
+                                <router-link to="/login" class="nav-link" exact>
+                                    <li><a data-toggle="modal">Sign in</a></li>
+                                </router-link>
+                            </ul>
+                            <ul v-show="user != null" style="display: flex;">
+                                <router-link to="/home" class="nav-link" exact>
+                                    <li><i class="icon-user"></i><a data-toggle="modal">Hello {{ user.name }}</a></li>
+                                </router-link>
                             </ul>
                         </div>
                         <!-- Signup Modal -->
@@ -141,12 +150,12 @@
                                     <ul class="nav topnav" style="display: flex">
                                         <router-link to="/index" class="nav-link" exact>
                                             <li class="dropdown active">
-                                                <a href="">Home </a>
+                                                <a href="" style="font-size: 20px">Home </a>
                                             </li>
                                         </router-link>
                                         <router-link to="/categories" class="nav-link" exact>
                                             <li class="dropdown active">
-                                                <a href="">Categories </a>
+                                                <a href="" style="font-size: 20px">Categories </a>
                                             </li>
                                         </router-link>
                                     </ul>
@@ -191,14 +200,40 @@
                                     </p>
                                     <div class="bottom-article">
                                         <ul class="meta-post">
-                                            <li><i class="icon-user"></i><a href="#"> Admin</a></li>
-                                            <li><i class="icon-folder-open"></i><a href="#"> Blog</a></li>
-                                            <li><i class="icon-tags"></i><a href="#">Web design</a></li>
+                                            <li><i class="icon-calendar"></i><a href="#"> {{ moment(articleData.created_at).format("DD-MM-YYYY") }}</a></li>
+                                            <li><i class="icon-user"></i><a href="#">Author: {{ articleData.user.name }} / {{ articleData.user.email }}</a></li>
+                                            <li><i class="icon-book"></i><a href="#">Views: {{ articleData.views }}</a></li>
+                                            <li><i class="icon-tags"></i><a style="cursor: pointer" v-for="(tag, index) in articleData.tags">{{ tag.name }}, </a></li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
                         </article>
+                        <div class="comment-area">
+                            <h4>5 Comments</h4>
+                            <div class="media" v-for="(comment, index) in articleData.comments" :key="index">
+                                <a href="#" class="thumbnail pull-left"><img src="../../../../public/assets/img/avatar.png" alt=""></a>
+                                <div class="media-body">
+                                    <div class="media-content">
+                                        <h6><span>{{ moment(comment.created_at).format("LL") }}</span> {{ comment.user.name }}</h6>
+                                        <p>{{ comment.comment }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <h4>Leave your comment</h4>
+                            <form id="commentform" action="#" method="post" name="comment-form">
+                                <div class="row">
+                                    <div class="span8 margintop10">
+                                        <p>
+                                            <textarea rows="12" class="input-block-level" v-model="commentData.comment" placeholder="*Your comment here"></textarea>
+                                        </p>
+                                        <p>
+                                            <button class="btn btn-theme margintop10" type="button" v-on:click="createComment">Submit comment</button>
+                                        </p>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                     <div class="span3">
                         <aside class="right-sidebar">
@@ -211,13 +246,13 @@
                             <div class="widget">
                                 <h5 class="widgetheading">Categories</h5>
                                 <ul class="cat">
-                                    <li v-for="(category, index) in categories" :key="index" ><i class="icon-angle-right"></i><a style="cursor: pointer">{{ category.name }}</a></li>
+                                    <li v-for="(category, index) in categories" :key="index" ><i class="icon-angle-right"></i><a style="cursor: pointer" v-on:click="getArticleByCategory(category.id)">{{ category.name }}</a></li>
                                 </ul>
                             </div>
                             <div class="widget">
-                                <h5 class="widgetheading">Latest articles</h5>
+                                <h5 class="widgetheading">Most View</h5>
                                 <ul class="recent">
-                                    <li v-for="(article, index) in latestArticle">
+                                    <li v-for="(article, index) in mostViewArticle">
                                         <router-link :to="`/articles/${article.id}`" class="nav-link" exact v-on:click.native="scrollToTop">
                                             <img v-bind:src="`${$store.state.serverPath}/storage/${article.image}`" class="pull-left" alt="" v-on:click="getArticle(article.id)"/>
                                             <h6><a href="">{{ article.title }}</a></h6>
@@ -228,12 +263,7 @@
                             <div class="widget">
                                 <h5 class="widgetheading">Popular tags</h5>
                                 <ul class="tags">
-                                    <li><a href="#">Web design</a></li>
-                                    <li><a href="#">Trends</a></li>
-                                    <li><a href="#">Technology</a></li>
-                                    <li><a href="#">Internet</a></li>
-                                    <li><a href="#">Tutorial</a></li>
-                                    <li><a href="#">Development</a></li>
+                                    <li v-for="(tag, index) in tags" :key="index"><a style="cursor: pointer" v-on:click="getArticleByTag(tag.id)">{{ tag.name }}</a></li>
                                 </ul>
                             </div>
                         </aside>
@@ -277,7 +307,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="span3">
+                    <div class="span2">
                         <div class="widget">
                             <h5 class="widgetheading">Get in touch with us</h5>
                             <address>
@@ -330,6 +360,8 @@
 
 <script>
     import * as articleService from '../../services/article_service.js';
+    import * as commentService from '../../services/comment_service';
+    import moment from "moment";
 
     export default {
         name: 'clientArticle',
@@ -338,14 +370,24 @@
                 id: this.$route.params.id,
                 categories: [],
                 articleData: '',
-                latestArticle: []
+                mostViewArticle: [],
+                tags: [],
+                user: '',
+                comments: [],
+                commentData: {
+                    comment: ''
+                },
+                errors: {},
+                moment: moment
             }
         },
 
         mounted(){
             this.loadCategories();
             this.getArticle(this.id);
-            this.getLatestArticle();
+            this.getMostViewArticle();
+            this.loadTags();
+            this.user = JSON.parse(localStorage.getItem('user'))
         },
 
         methods: {
@@ -354,20 +396,60 @@
                 this.categories = response.data.data;
             },
 
+            loadTags : async function(){
+                const response = await articleService.loadTags();
+                this.tags = response.data.data;
+            },
+
             getArticle : async function(id) {
                 const response = await articleService.getArticle(id);
                 this.articleData = response.data.data;
             },
 
-            getLatestArticle: async function(){
-                const response = await articleService.getLatestArticle();
-                this.latestArticle = response.data.data;
+            getMostViewArticle: async function(){
+                const response = await articleService.getMostViewArticle();
+                this.mostViewArticle = response.data.data;
+            },
+
+            getArticleByTag: async function(id){
+                const response = await articleService.getArticleByTag(id);
+                this.articleData = response.data.data;
             },
 
             getArticleByCategory: async function(id){
                 const response = await articleService.getArticleByCategory(id);
-                this.articles = response.data.data;
+                this.articleData = response.data.data;
             },
+
+            createComment: async function() {
+                let formData = new FormData();
+                formData.append('user_id', this.user.id);
+                formData.append('article_id', this.id);
+                formData.append('comment', this.commentData.comment);
+
+                try {
+                    const response = await commentService.createComment(formData)
+                    this.articleData.comments.push(response.data.data);
+
+                    this.commentData = {
+                        comment: ''
+                    }
+                } catch (error) {
+                    switch (error.response.status) {
+                        case 422:
+                            this.errors = error.response.data.errors;
+                            break;
+                        default:
+                            this.flashMessage.error({
+                                message: 'Something error. Please try again !',
+                                time: 5000
+                            });
+                            break;
+                    }
+                }
+
+            },
+
             scrollToTop() {
                 window.scrollTo(0,0);
             }

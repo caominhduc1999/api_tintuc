@@ -1,20 +1,28 @@
 <template>
-    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-        <div class="input-group">
-            <div class="input-group-append" v-if="!token">
-                <router-link to="/register">
-                    <button class="btn btn-success" type="button">Register</button>
-                </router-link>
-            </div>
-            <div class="input-group-append" v-if="!token">
-                <router-link to="/login">
-                    <button class="btn btn-info" type="button">Login</button>
-                </router-link>
-            </div>
-            <div class="input-group-append" v-if="token">
-                <button class="btn btn-danger" type="button" v-on:click.prevent="logout">Logout</button>
-            </div>
-        </div>
+    <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom">
+        <!-- Left navbar links -->
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" data-widget="pushmenu" href="#"><i class="fa fa-bars"></i></a>
+            </li>
+            <router-link to="/index" exact>
+                <i class="fa fa-home"></i>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="" class="nav-link">Home Page</a>
+                </li>
+            </router-link>
+        </ul>
+
+        <!-- Right navbar links -->
+        <ul class="navbar-nav ml-auto" v-if="token">
+            <!-- Messages Dropdown Menu -->
+            <li class="nav-item dropdown">
+                <a class="nav-link" data-toggle="dropdown" href="#">
+                    <span class="badge badge-danger navbar-badge" v-on:click.prevent="logout">Logout</span>
+                </a>
+            </li>
+
+        </ul>
     </nav>
 </template>
 
@@ -60,7 +68,3 @@
         }
     }
 </script>
-
-<style scoped>
-
-</style>

@@ -1,62 +1,110 @@
 <template>
-    <div class="container-fluid">
-        <h1 class="mt-4">Dashboard</h1>
-        <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item active">Dashboard</li>
-        </ol>
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Article Management</h3>
+                                <div class="row">
+                                    <div class="card-tools col-md-10">
+                                        <div class="input-group input-group-sm w-100">
+                                            <input type="text"
+                                                   name="table_search"
+                                                   class="form-control float-right"
+                                                   style="width: 45%; box-sizing: content-box; display: block; position: relative;"
+                                                   v-model="search.title"
+                                                   placeholder="Search Name"
+                                            >
+                                            <div style="width: 45%">
+                                            <multiselect
+                                                    v-model="search.category_id"
+                                                    :options="categories.map(category => category.id)"
+                                                    :custom-label="category => categories.find(x => x.id == category).name"
+                                                    placeholder="Search category"
+                                                    label="name"
+                                                    track-by="id"
+                                            >
+                                            </multiselect>
+                                            </div>
+                                            <button class="btn btn-primary" style="width: 5%" v-on:click="searchArticles"><i class="fa fa-search"></i></button>
+                                        </div>
 
-        <div class="row">
-            <div class="col-xl-12">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <i class="fas fa-chart-area mr-1"></i>Article Management
-                        <button class="btn btn-primary btn-sm" v-on:click="showNewArticleModal"><span class="fa fa-plus"></span>Create New</button>
-                    </div>
-                    <div class="card-body">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <td>#</td>
-                                <td>Title</td>
-                                <td>Category</td>
-                                <td>Image</td>
-                                <td>Action</td>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="(article, index) in articles" v-bind:key="index">
-                                <td>{{ index + 1 }}</td>
-                                <td>{{ article.title }}</td>
-                                <td>{{ findCategory(article.category_id)}}</td>
-                                <td style="width: 50%">
-                                    <img class="table-image" style="width: 50%" v-bind:src="`${$store.state.serverPath}/storage/${article.image}`" v-bind:alt="article.title">
-                                </td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm" v-on:click="editArticle(article)"><span class="fa fa-edit">Edit</span></button>
-                                    <button class="btn btn-danger btn-sm" v-on:click="deleteArticle(article)"><span class="fa fa-trash">Delete</span></button>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <div class="text-center" v-show="moreExists">
-                            <button class="btn btn-sm btn-info" v-on:click="loadMore"><span class="fa fa-arrow-down"></span>Load More</button>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-success btn-sm btn-block" v-on:click="showNewArticleModal"><span class="fa fa-plus"></span> Create New</button>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body table-responsive p-0">
+                                <table class="table table-hover">
+                                    <tbody>
+                                        <tr>
+                                            <td>#</td>
+                                            <td>Title</td>
+                                            <td>Category</td>
+                                            <td>Tags</td>
+                                            <td>Image</td>
+                                            <td style="width: 10%;">Action</td>
+                                        </tr>
+                                        <tr v-for="(article, index) in articles" v-bind:key="index">
+                                            <td>{{ index + 1 }}</td>
+                                            <td>{{ article.title }}</td>
+                                            <td>{{ findCategory(article.category_id)}}</td>
+                                            <td>
+                                                <span style="margin-right: 5px" class="badge badge-info" v-for="tag in article.tags">{{ tag.name }}</span>
+                                            </td>
+                                            <td style="width: 50%">
+                                                <img class="table-image" style="width: 50%" v-bind:src="`${$store.state.serverPath}/storage/${article.image}`" v-bind:alt="article.title">
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-warning btn-sm" v-on:click="editArticle(article)"><span class="fa fa-edit"></span></button>
+                                                <button class="btn btn-danger btn-sm" v-on:click="deleteArticle(article)"><span class="fa fa-trash"></span></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="text-center" v-show="moreExists && search != null">
+                                <button class="btn btn-sm btn-info" v-on:click="loadMore"><span class="fa fa-arrow-down"></span>Load More</button>
+                            </div>
+                            <!-- /.card-body -->
                         </div>
+                        <!-- /.card -->
                     </div>
                 </div>
             </div>
-
-        </div>
-
+        </section>
         <!--create article-->
         <b-modal ref="newArticleModal" hide-footer title="Add Article">
             <div class="d-block text-center">
                 <form v-on:submit.prevent="createArticle">
                     <div class="form-group">
-                        <label for="category_id">Category</label>
-                        <select v-model="articleData.category_id" id="category_id" class="form-control">
-                            <option value="">Choose Category</option>
-                            <option v-for="(category, index) in categories" :value="category.id" :key="index">{{category.name}}</option>
-                        </select>
+                        <label >Category</label>
+                        <multiselect
+                            v-model="articleData.category_id"
+                            :options="categories.map(category => category.id)"
+                            :custom-label="category => categories.find(x => x.id == category).name"
+                            placeholder="Search and select one"
+                            >
+                        </multiselect>
+                        <div style="color: red" v-if="errors.category_id">{{errors.category_id[0]}}</div>
+                    </div>
+                    <div class="form-group">
+                        <label >Tags</label>
+                        <multiselect
+                                v-model="articleData.tag_ids"
+                                :options="tags.map(tag => tag.id)"
+                                :multiple="true"
+                                :custom-label="tag => tags.find(x => x.id == tag).name"
+                                placeholder="Search and select one"
+                                label="name"
+                                track-by="id"
+                            >
+                        </multiselect>
                         <div style="color: red" v-if="errors.category_id">{{errors.category_id[0]}}</div>
                     </div>
                     <div class="form-group">
@@ -95,13 +143,24 @@
             <div class="d-block text-center">
                 <form v-on:submit.prevent="updateArticle">
                     <div class="form-group">
-                        <label for="category_id">Category</label>
-                        <select v-model="editArticleData.category_id" id="" class="form-control">
-                            <option value="">Choose Category</option>
-                            <option v-for="(category, index) in categories" :value="category.id" :key="index">{{category.name}}</option>
-                        </select>
+                        <label>Category</label>
+                        <multiselect
+                                v-model="editArticleData.category_id"
+                                :options="categories.map(category => category.id)"
+                                :custom-label="category => categories.find(x => x.id == category).name"
+                                placeholder="Search and select one"
+                            >
+                        </multiselect>
                         <div style="color: red" v-if="errors.name">{{errors.name[0]}}</div>
                     </div>
+                    <multiselect
+                            v-model="editArticleData.tag_ids"
+                            :options="tags.map(tag => tag.id)"
+                            :multiple="true"
+                            :custom-label="tag => tags.find(x => x.id == tag).name"
+                            placeholder="Search and select one"
+                        >
+                    </multiselect>
                     <div class="form-group">
                         <label >Enter Title</label>
                         <input type="text" v-model="editArticleData.title" class="form-control" placeholder="Enter Title">
@@ -136,31 +195,45 @@
 
 <script>
     import * as articleService from '../../services/article_service.js';
+    import Multiselect from 'vue-multiselect';
 
     export default {
         name: 'article',
+        components: {
+            Multiselect
+        },
         data(){
             return {
                 categories: [],
+                tags: [],
                 articles: [],
                 articleData: {
                     category_id: '',
                     title: '',
                     summary: '',
                     content: '',
-                    image: ''
+                    image: '',
+                    tag_ids: ''
                 },
-                editArticleData: {},
+                editArticleData: {
+                    tag_ids: []
+                },
                 errors: {},
                 moreExists: false,
-                nextPage: 0
+                nextPage: 0,
+                search: {
+                    title: '',
+                    category_id: ''
+                },
+
             }
         },
 
         mounted(){
-            // this.loadMore();
             this.loadCategories();
-            this.loadArticles();
+            this.loadTags();
+            // this.loadArticles();
+            this.loadMore();
         },
 
         methods:{
@@ -196,10 +269,39 @@
                 }
             },
 
+            loadTags : async function(){
+                try{
+                    const response = await articleService.loadTags();
+                    this.tags = response.data.data;
+                }catch(error){
+                    this.flashMessage.error({
+                        message: 'Something error. Please refresh !',
+                        time: 5000
+                    });
+                }
+            },
+
             loadArticles : async function(){
                 try{
                     const response = await articleService.loadArticles();
+                    this.articles = response.data.data.data;
+                }catch(error){
+                    this.flashMessage.error({
+                        message: 'Something error. Please refresh !',
+                        time: 5000
+                    });
+                }
+            },
+
+            searchArticles : async function() {
+                let formData = new FormData();
+                formData.append('title', this.search.title);
+                formData.append('category_id', this.search.category_id);
+
+                try{
+                    const response = await articleService.searchArticles(formData);
                     this.articles = response.data.data;
+
                 }catch(error){
                     this.flashMessage.error({
                         message: 'Something error. Please refresh !',
@@ -215,10 +317,11 @@
                 formData.append('content', this.articleData.content);
                 formData.append('category_id', this.articleData.category_id);
                 formData.append('image', this.articleData.image);
+                formData.append('tag_ids', this.articleData.tag_ids);
 
                 try {
                     const response = await articleService.createArticle(formData)
-                    this.articles.unshift(response.data);
+                    this.articles.unshift(response.data.data);
                     this.flashMessage.success({
                         message: 'Article stored successfully !',
                         time: 5000
@@ -228,9 +331,9 @@
                         title: '',
                         summary: '',
                         content: '',
-                        image: ''
+                        image: '',
+                        tag_ids: ''
                     };
-
                     this.loadArticles();
                     this.hideNewArticleModal();
                 }catch (error) {
@@ -273,6 +376,7 @@
 
             editArticle: async function(article){
                 this.editArticleData = {...article};
+                this.editArticleData.tag_ids = article.tags.map(tag => tag.id);
                 this.showEditArticleModal();
             },
 
@@ -284,13 +388,14 @@
                     formData.append('content', this.editArticleData.content);
                     formData.append('category_id', this.editArticleData.category_id);
                     formData.append('image', this.editArticleData.image);
+                    formData.append('tag_ids', this.editArticleData.tag_ids);
                     formData.append('_method', 'put');
 
                     const response = await articleService.updateArticle(this.editArticleData.id, formData);
                     this.articles.map(article => {
-                        if (article.id === response.data.id){
-                            for(let key in response.data){
-                                article[key] = response.data[key];
+                        if (article.id === response.data.data.id){
+                            for(let key in response.data.data){
+                                article[key] = response.data.data[key];
                             }
                         }
                     });
@@ -328,14 +433,14 @@
             loadMore: async function(){
                 try{
                     const response = await articleService.loadMore(this.nextPage)
-                    if (response.data.current_page < response.data.last_page){
+                    if (response.data.data.current_page < response.data.data.last_page){
                         this.moreExists = true;
-                        this.nextPage = response.data.current_page + 1;
+                        this.nextPage = response.data.data.current_page + 1;
                     }else{
                         this.moreExists = false;
                     }
 
-                    response.data.data.forEach(data => {
+                    response.data.data.data.forEach(data => {
                         this.articles.push(data)
                     })
                 }catch (e) {
@@ -355,6 +460,9 @@
                 });
                 return category_name;
             }
-        }
+        },
     }
 </script>
+
+<style scoped src="../../../../public/admin/assets/plugins/font-awesome/css/font-awesome.min.css"></style>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
