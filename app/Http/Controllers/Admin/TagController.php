@@ -75,7 +75,7 @@ class TagController extends Controller
     public function search(Request $request)
     {
         $name = $request->name;
-        $tags = Tag::where('name', 'like', '%'.$name.'%')->get();
+        $tags = Tag::where('name', 'like', '%'.$name.'%')->orderBy('created_at', 'desc')->get();
         return response()->json([
             'data' => $tags
         ], 200);

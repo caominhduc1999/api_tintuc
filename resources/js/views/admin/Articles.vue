@@ -15,16 +15,14 @@
                                                    class="form-control float-right"
                                                    style="width: 45%; box-sizing: content-box; display: block; position: relative;"
                                                    v-model="search.title"
-                                                   placeholder="Search Name"
+                                                   placeholder="Search Title"
                                             >
                                             <div style="width: 45%">
                                             <multiselect
                                                     v-model="search.category_id"
                                                     :options="categories.map(category => category.id)"
                                                     :custom-label="category => categories.find(x => x.id == category).name"
-                                                    placeholder="Search category"
-                                                    label="name"
-                                                    track-by="id"
+                                                    placeholder="Search Category"
                                             >
                                             </multiselect>
                                             </div>
@@ -101,8 +99,6 @@
                                 :multiple="true"
                                 :custom-label="tag => tags.find(x => x.id == tag).name"
                                 placeholder="Search and select one"
-                                label="name"
-                                track-by="id"
                             >
                         </multiselect>
                         <div style="color: red" v-if="errors.category_id">{{errors.category_id[0]}}</div>
@@ -114,12 +110,44 @@
                     </div>
                     <div class="form-group">
                         <label >Enter Summary</label>
-                        <textarea v-model="articleData.summary" class="form-control" placeholder="Enter Summary" cols="30" rows="10"></textarea>
+                        <editor
+                            v-model="articleData.summary"
+                            api-key="j326pk4u71odw7cg7angineo68my440vywpa8xrhn6lkm0yw"
+                            :init="{
+                             height: 500,
+                             menubar: false,
+                             plugins: [
+                               'advlist autolink lists link image charmap print preview anchor',
+                               'searchreplace visualblocks code fullscreen',
+                               'insertdatetime media table paste code help wordcount'
+                             ],
+                             toolbar:
+                               'undo redo | formatselect | bold italic backcolor | \
+                               alignleft aligncenter alignright alignjustify | \
+                               bullist numlist outdent indent | removeformat | help'
+                           }"
+                        />
                         <div style="color: red" v-if="errors.summary">{{errors.summary[0]}}</div>
                     </div>
                     <div class="form-group">
                         <label >Enter Content</label>
-                        <textarea v-model="articleData.content" class="form-control" placeholder="Enter Content" cols="30" rows="10"></textarea>
+                        <editor
+                            v-model="articleData.content"
+                            api-key="j326pk4u71odw7cg7angineo68my440vywpa8xrhn6lkm0yw"
+                            :init="{
+                             height: 500,
+                             menubar: false,
+                             plugins: [
+                               'advlist autolink lists link image charmap print preview anchor',
+                               'searchreplace visualblocks code fullscreen',
+                               'insertdatetime media table paste code help wordcount'
+                             ],
+                             toolbar:
+                               'undo redo | formatselect | bold italic backcolor | \
+                               alignleft aligncenter alignright alignjustify | \
+                               bullist numlist outdent indent | removeformat | help'
+                           }"
+                        />
                         <div style="color: red" v-if="errors.content">{{errors.content[0]}}</div>
                     </div>
                     <div class="form-group">
@@ -168,12 +196,46 @@
                     </div>
                     <div class="form-group">
                         <label >Enter Summary</label>
-                        <textarea v-model="editArticleData.summary" class="form-control" placeholder="Enter Summary" cols="30" rows="10"></textarea>
+                        <!--<textarea v-model="editArticleData.summary" class="form-control" placeholder="Enter Summary" cols="30" rows="10"></textarea>-->
+                        <editor
+                            v-model="editArticleData.summary"
+                            api-key="j326pk4u71odw7cg7angineo68my440vywpa8xrhn6lkm0yw"
+                            :init="{
+                             height: 500,
+                             menubar: false,
+                             plugins: [
+                               'advlist autolink lists link image charmap print preview anchor',
+                               'searchreplace visualblocks code fullscreen',
+                               'insertdatetime media table paste code help wordcount'
+                             ],
+                             toolbar:
+                               'undo redo | formatselect | bold italic backcolor | \
+                               alignleft aligncenter alignright alignjustify | \
+                               bullist numlist outdent indent | removeformat | help'
+                           }"
+                        />
                         <div style="color: red" v-if="errors.summary">{{errors.summary[0]}}</div>
                     </div>
                     <div class="form-group">
                         <label >Enter Content</label>
-                        <textarea v-model="editArticleData.content" class="form-control" placeholder="Enter Content" cols="30" rows="10"></textarea>
+                        <!--<textarea v-model="editArticleData.content" class="form-control" placeholder="Enter Content" cols="30" rows="10"></textarea>-->
+                        <editor
+                            v-model="editArticleData.content"
+                            api-key="j326pk4u71odw7cg7angineo68my440vywpa8xrhn6lkm0yw"
+                            :init="{
+                             height: 500,
+                             menubar: false,
+                             plugins: [
+                               'advlist autolink lists link image charmap print preview anchor',
+                               'searchreplace visualblocks code fullscreen',
+                               'insertdatetime media table paste code help wordcount'
+                             ],
+                             toolbar:
+                               'undo redo | formatselect | bold italic backcolor | \
+                               alignleft aligncenter alignright alignjustify | \
+                               bullist numlist outdent indent | removeformat | help'
+                           }"
+                        />
                         <div style="color: red" v-if="errors.content">{{errors.content[0]}}</div>
                     </div>
                     <div class="form-group">
@@ -196,11 +258,13 @@
 <script>
     import * as articleService from '../../services/article_service.js';
     import Multiselect from 'vue-multiselect';
+    import Editor from '@tinymce/tinymce-vue';
 
     export default {
         name: 'article',
         components: {
-            Multiselect
+            Multiselect,
+            'editor': Editor
         },
         data(){
             return {
@@ -352,7 +416,7 @@
             },
 
             deleteArticle: async function(article){
-                if(! window.confirm(`Are you want to delete ${article.name} ?`)){
+                if(! window.confirm(`Are you want to delete "${article.title}" ?`)){
                     return;
                 }
 

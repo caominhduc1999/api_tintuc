@@ -173,7 +173,7 @@
             <!-- Slider -->
             <div id="nivo-slider">
                 <div class="">
-                    <img src="../../../../public/assets/img/slides/nivo/bg-4.jpg" alt="" title="#caption-1" />
+                    <img src="../../../../public/assets/img/slides/nivo/bg-5.png" alt="" title="#caption-1" />
                 </div>
                 <div class="container">
                     <div class="row">
@@ -295,17 +295,17 @@
                                 <ul id="thumbs" class="portfolio">
                                     <li v-for="(article, index) in articles" class="item-thumbs span3 design" data-id="id-0" data-type="web">
                                         <router-link :to="`/articles/${article.id}`" class="nav-link" exact>
-                                        <!--<a class="hover-wrap fancybox" data-fancybox-group="gallery" title="The City" style="cursor: pointer">-->
-                                            <!--<span class="overlay-img"></span>-->
-                                            <!--<span class="overlay-img-thumb font-icon-eye"></span>-->
-                                        <!--</a>-->
+                                        <a class="hover-wrap fancybox" data-fancybox-group="gallery" title="The City" style="cursor: pointer">
+                                            <span class="overlay-img"></span>
+                                            <span class="overlay-img-thumb font-icon-eye"></span>
+                                        </a>
 
-                                        <img v-bind:src="`${$store.state.serverPath}/storage/${article.image}`" alt="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus quis elementum odio. Curabitur pellentesque, dolor vel pharetra mollis.">
-                                        <p style="font-weight: bold">{{ article.title }}</p>
+                                        <img style="max-height: 130px" v-bind:src="`${$store.state.serverPath}/storage/${article.image}`" v-bind:alt="`${article.title}`">
+                                        <p style="font-weight: bold">{{ article.title | stringLimit(50) }}</p>
                                         </router-link>
                                     </li>
-                                    <div class="text-center" v-show="moreExists">
-                                        <button class="btn btn-small btn-theme btn-rounded" style="color: white" v-on:click="getHottestArticles"><span class="fa fa-arrow-down"></span>Load More</button>
+                                    <div v-show="moreExists">
+                                        <button class="btn btn-small btn-theme btn-rounded" style="color: white; " v-on:click="getHottestArticles"><span class="fa fa-arrow-down"></span>Load More</button>
                                     </div>
                                 </ul>
                             </section>
@@ -516,7 +516,7 @@
         },
 
         mounted() {
-            this.user = JSON.parse(localStorage.getItem('user'))
+            // this.user = JSON.parse(localStorage.getItem('user'))
             this.getHottestArticles()
         },
 

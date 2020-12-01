@@ -191,7 +191,9 @@
                                                 <h3><a href="">{{ article.title }}</a></h3>
                                             </router-link>
                                         </div>
-                                        <img v-bind:src="`${$store.state.serverPath}/storage/${article.image}`" alt="" />
+                                        <router-link :to="`articles/${article.id}`" class="nav-link" exact v-on:click.native="scrollToTop">
+                                            <img v-bind:src="`${$store.state.serverPath}/storage/${article.image}`" alt="" />
+                                        </router-link>
                                     </div>
                                     <p>
                                         {{ article.summary }}
@@ -199,11 +201,11 @@
                                     <div class="bottom-article">
                                         <ul class="meta-post">
                                             <li><i class="icon-calendar"></i><a href="#"> {{ moment(article.created_at).format("DD-MM-YYYY") }}</a></li>
-                                            <li><i class="icon-user"></i><a style="cursor: pointer" v-on:click="getArticleByUser(article.user.id)">Author: {{ article.user.name }} / {{ article.user.email }}</a></li>
+                                            <li><i class="icon-user"></i><a style="cursor: pointer" v-on:click="getArticleByUser(article.user.id); scrollToTop()">Author: {{ article.user.name }} / {{ article.user.email }}</a></li>
                                             <li><i class="icon-book"></i><a href="#">Views: {{ article.views }}</a></li>
-                                            <li><i class="icon-tags"></i><a style="cursor: pointer" v-for="(tag, index) in article.tags" v-on:click="getArticleByTag(tag.id)">{{ tag.name }}, </a></li>
+                                            <li><i class="icon-tags"></i><a style="cursor: pointer" v-for="(tag, index) in article.tags" v-on:click="getArticleByTag(tag.id); scrollToTop()">{{ tag.name }}, </a></li>
                                         </ul>
-                                        <router-link :to="`articles/${article.id}`" class="nav-link" exact v-on:click.native="scrollToTop">
+                                        <router-link :to="`articles/${article.id}`" class="nav-link" exact v-on:click.native="scrollToTop()">
                                             <a href="" class="pull-right">Continue reading <i class="icon-angle-right"></i></a>
                                         </router-link>
                                     </div>
@@ -219,14 +221,14 @@
                         <aside class="right-sidebar">
                             <div class="widget">
                                 <form class="form-search">
-                                    <input placeholder="Type something" type="text" class="input-medium search-query">
-                                    <button type="submit" class="btn btn-square btn-theme">Search</button>
+                                    <input placeholder="Type something" type="text" v-model="search" class="input-large search-query">
+                                    <button type="button" class="btn btn-small btn-square btn-theme" v-on:click="searchArticleIndex">Search</button>
                                 </form>
                             </div>
                             <div class="widget">
                                 <h5 class="widgetheading">Categories</h5>
                                 <ul class="cat">
-                                    <li v-for="(category, index) in categories" :key="index" ><i class="icon-angle-right"></i><a style="cursor: pointer" v-on:click="getArticleByCategory(category.id)">{{ category.name }}</a></li>
+                                    <li v-for="(category, index) in categories" :key="index" v-on:click="scrollToTop()"><i class="icon-angle-right"></i><a style="cursor: pointer" v-on:click="getArticleByCategory(category.id)">{{ category.name }}</a></li>
                                 </ul>
                             </div>
                             <div class="widget">
@@ -243,7 +245,7 @@
                             <div class="widget">
                                 <h5 class="widgetheading">Popular tags</h5>
                                 <ul class="tags">
-                                    <li v-for="(tag, index) in tags" :key="index"><a style="cursor: pointer" v-on:click="getArticleByTag(tag.id)">{{ tag.name }}</a></li>
+                                    <li v-for="(tag, index) in tags" :key="index"><a style="cursor: pointer" v-on:click="getArticleByTag(tag.id); scrollToTop()" >{{ tag.name }}</a></li>
                                 </ul>
                             </div>
                         </aside>
@@ -353,6 +355,7 @@
                 user: '',
                 moreExists: false,
                 nextPage: 0,
+                search: '',
                 moment: moment
             }
         },
@@ -374,6 +377,14 @@
             loadTags : async function(){
                 const response = await articleService.loadTags();
                 this.tags = response.data.data;
+            },
+
+            searchArticleIndex : async function(){
+                let formData = new FormData();
+                formData.append('search', this.search);
+
+                const response = await articleService.searchArticlesIndex(formData);
+                this.articles = response.data.data;
             },
 
             getArticleByCategory: async function(id){

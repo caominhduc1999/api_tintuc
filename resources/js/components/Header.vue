@@ -8,7 +8,7 @@
             <router-link to="/index" exact>
                 <i class="fa fa-home"></i>
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="" class="nav-link">Home Page</a>
+                    <a style="cursor: pointer" class="nav-link">Home Page</a>
                 </li>
             </router-link>
         </ul>

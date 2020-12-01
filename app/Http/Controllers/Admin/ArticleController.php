@@ -61,7 +61,9 @@ class ArticleController extends Controller
         }
 
         if ($article->save()){
-            $article->tags()->attach($tag_ids);
+            if ($request->tag_ids) {
+                $article->tags()->attach($tag_ids);
+            }
             return response()->json([
                 'data' => $article
             ], 201);
@@ -122,6 +124,7 @@ class ArticleController extends Controller
     public function destroy(Article $article)
     {
         $article->tags()->detach();
+        $article->category();
         if($article->delete()){
             Storage::delete($article->image);
             return response()->json([
@@ -210,16 +213,26 @@ class ArticleController extends Controller
 
     public function search(Request $request)
     {
-
         $title = $request->title;
         $category_id = $request->category_id;
-        $articles = Article::with('tags')->when($title, function ($q) use ($title) {
-                                                    return $q->where('title', 'like', '%'.$title.'%');
-                                                })
-                                                ->when($category_id != 'null', function ($q) use ($category_id) {
+        $articles = Article::with('tags')->when($category_id != 'null', function ($q) use ($category_id) {
                                                     return $q->where('category_id', $category_id);
                                                 })
-                                                ->get();
+                                                ->when($title, function ($q) use ($title) {
+                                                    return $q->where('title', 'like', '%'.$title.'%');
+                                                })
+            ->orderBy('created_at', 'desc')->get();
+
+        return response()->json([
+            'data' => $articles
+        ], 200);
+    }
+
+    public function searchArticleIndex(Request $request)
+    {
+        $key = $request->search;
+        $articles = Article::with('tags', 'user')->where('title', 'like', '%'.$key.'%')
+                            ->orderBy('created_at', 'desc')->get();
         return response()->json([
             'data' => $articles
         ], 200);

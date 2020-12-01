@@ -59,3 +59,7 @@ export function getMostViewArticle() {
 export function loadMore(nextPage) {
     return http().get(`/articles?page=${nextPage}`);
 }
+
+export function searchArticlesIndex(data) {
+    return http().post('/search-articles-index', data);
+}

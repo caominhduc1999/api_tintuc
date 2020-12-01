@@ -152,7 +152,7 @@
 
                 try {
                     const response = await categoryService.createCategory(formData)
-
+                    this.categories.unshift(response.data.data);
                     this.flashMessage.success({
                         message: 'Category stored successfully !',
                         time: 5000

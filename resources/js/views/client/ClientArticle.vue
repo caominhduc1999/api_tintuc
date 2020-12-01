@@ -192,11 +192,11 @@
                                         </div>
                                         <img v-bind:src="`${$store.state.serverPath}/storage/${articleData.image}`" alt="" />
                                     </div>
-                                    <blockquote>
-                                        <i class="icon-quote-left"></i>{{ articleData.summary }}
+                                    <blockquote v-html="articleData.summary">
+
                                     </blockquote>
-                                    <p>
-                                        {{ articleData.content }}
+                                    <p v-html="articleData.content">
+
                                     </p>
                                     <div class="bottom-article">
                                         <ul class="meta-post">
@@ -210,7 +210,7 @@
                             </div>
                         </article>
                         <div class="comment-area">
-                            <h4>5 Comments</h4>
+                            <h4>{{ articleData.comments.length }} Comments</h4>
                             <div class="media" v-for="(comment, index) in articleData.comments" :key="index">
                                 <a href="#" class="thumbnail pull-left"><img src="../../../../public/assets/img/avatar.png" alt=""></a>
                                 <div class="media-body">
@@ -255,7 +255,7 @@
                                     <li v-for="(article, index) in mostViewArticle">
                                         <router-link :to="`/articles/${article.id}`" class="nav-link" exact v-on:click.native="scrollToTop">
                                             <img v-bind:src="`${$store.state.serverPath}/storage/${article.image}`" class="pull-left" alt="" v-on:click="getArticle(article.id)"/>
-                                            <h6><a href="">{{ article.title }}</a></h6>
+                                            <h6><a style="cursor: pointer">{{ article.title }}</a></h6>
                                         </router-link>
                                     </li>
                                 </ul>

@@ -75,7 +75,7 @@ class CategoryController extends Controller
     public function search(Request $request)
     {
         $name = $request->name;
-        $categories = Category::where('name', 'like', '%'.$name.'%')->get();
+        $categories = Category::where('name', 'like', '%'.$name.'%')->orderBy('created_at', 'desc')->get();
         return response()->json([
             'data' => $categories
         ], 200);

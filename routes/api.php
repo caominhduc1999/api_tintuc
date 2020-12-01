@@ -42,6 +42,7 @@ Route::get('get-article-by-tag/{id}', 'Admin\ArticleController@getArticleByTag')
 Route::get('get-latest-articles', 'Admin\ArticleController@getLatestArticle');
 Route::get('get-most-view-articles', 'Admin\ArticleController@getMostViewArticle');
 Route::get('get-hottest-articles', 'Admin\ArticleController@getHottestArticle');
+Route::post('search-articles-index', 'Admin\ArticleController@searchArticleIndex');
 
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::post('login', 'AuthController@login');
