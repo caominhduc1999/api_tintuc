@@ -15,6 +15,7 @@ class ArticleController extends Controller
     public function index()
     {
         $articles = Article::with('tags')->orderBy('created_at', 'desc')->paginate(10);
+
         return response()->json([
             'data' => $articles
         ], 200);
@@ -133,7 +134,7 @@ class ArticleController extends Controller
             ], 204);
         }else{
             return response()->json([
-                'message'   =>  'Some errors occured. Please try again !',
+                'message'   =>  'Some errors occurred. Please try again !',
                 'status_code'   =>  500
             ], 500);
         }

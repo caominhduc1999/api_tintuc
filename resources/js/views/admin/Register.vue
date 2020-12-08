@@ -104,7 +104,7 @@
                 }).then(res => {
                     this.isLoading = false
                     localStorage.setItem('token', res.data.access_token)
-                    localStorage.setItem('user', res.data.user)
+                    localStorage.setItem('user', JSON.stringify(res.data.user))
                     this.$router.push('/home')
                 })
                     .catch(err => {

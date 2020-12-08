@@ -98,7 +98,6 @@
                     this.isLoading = false;
                     localStorage.setItem('token', res.data.access_token)
                     localStorage.setItem('user', JSON.stringify(res.data.user))
-                    console.log(JSON.stringify(res.data.user))
                     this.$router.push('/home')
                 })
                     .catch(err => {

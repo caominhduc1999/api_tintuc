@@ -56,39 +56,44 @@
                         <div class="row">
                             <div class="col-lg-3 col-6">
                                 <!-- small box -->
+                                <router-link to="/home/categories" class="nav-link" exact>
                                 <div class="small-box bg-info">
                                     <div class="inner">
-                                        <h3>150</h3>
+                                        <h3>{{ categoryQuantity }}</h3>
 
-                                        <p>New Orders</p>
+                                        <p>Categories</p>
                                     </div>
                                     <div class="icon">
                                         <i class="ion ion-bag"></i>
                                     </div>
                                     <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
+                                </router-link>
                             </div>
                             <!-- ./col -->
                             <div class="col-lg-3 col-6">
                                 <!-- small box -->
+                                <router-link to="/home/articles" class="nav-link" exact>
                                 <div class="small-box bg-success">
                                     <div class="inner">
-                                        <h3>53<sup style="font-size: 20px">%</sup></h3>
+                                        <h3>{{ articleQuantity }}</h3>
 
-                                        <p>Bounce Rate</p>
+                                        <p>Articles</p>
                                     </div>
                                     <div class="icon">
                                         <i class="ion ion-stats-bars"></i>
                                     </div>
                                     <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
+                                </router-link>
                             </div>
                             <!-- ./col -->
                             <div class="col-lg-3 col-6">
                                 <!-- small box -->
+                                <router-link to="/home/users" class="nav-link" exact>
                                 <div class="small-box bg-warning">
                                     <div class="inner">
-                                        <h3>44</h3>
+                                        <h3>{{ userQuantity }}</h3>
 
                                         <p>User Registrations</p>
                                     </div>
@@ -97,21 +102,24 @@
                                     </div>
                                     <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
+                                </router-link>
                             </div>
                             <!-- ./col -->
                             <div class="col-lg-3 col-6">
                                 <!-- small box -->
+                                <router-link to="/home/tags" class="nav-link" exact>
                                 <div class="small-box bg-danger">
                                     <div class="inner">
-                                        <h3>65</h3>
+                                        <h3>{{ tagQuantity }}</h3>
 
-                                        <p>Unique Visitors</p>
+                                        <p>Tags</p>
                                     </div>
                                     <div class="icon">
                                         <i class="ion ion-pie-graph"></i>
                                     </div>
                                     <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                                 </div>
+                                </router-link>
                             </div>
                             <!-- ./col -->
                         </div>
@@ -245,13 +253,51 @@
 
 <script>
     import Sidebar from '../../components/Sidebar.vue';
+    import * as categoryService from '../../services/category_service.js';
+    import * as articleService from '../../services/article_service.js';
+    import * as tagService from '../../services/tag_service.js';
+    import * as userService from '../../services/user_service.js';
 
     export default {
         components: {
             Sidebar,
         },
         data(){
-            return {}
+            return {
+                userQuantity: '',
+                categoryQuantity: '',
+                articleQuantity: '',
+                tagQuantity: ''
+            }
+        },
+
+        mounted(){
+            this.getCategoryQuantity();
+            this.getArticleQuantity();
+            this.getTagQuantity();
+            this.getUserQuantity();
+        },
+
+        methods: {
+            getUserQuantity: async function(){
+                const response = await userService.loadUsers();
+                this.userQuantity = response.data.data.data.length;
+            },
+
+            getCategoryQuantity: async function(){
+                const response = await categoryService.loadCategories();
+                this.categoryQuantity = response.data.data.data.length;
+            },
+
+            getArticleQuantity: async function(){
+                const response = await articleService.loadArticles();
+                this.articleQuantity = response.data.data.data.length;
+            },
+
+            getTagQuantity: async function(){
+                const response = await tagService.loadTags();
+                this.tagQuantity = response.data.data.data.length;
+            },
         },
 
         created() {

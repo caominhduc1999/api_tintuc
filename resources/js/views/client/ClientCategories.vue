@@ -195,8 +195,8 @@
                                             <img v-bind:src="`${$store.state.serverPath}/storage/${article.image}`" alt="" />
                                         </router-link>
                                     </div>
-                                    <p>
-                                        {{ article.summary }}
+                                    <p v-html="article.summary">
+
                                     </p>
                                     <div class="bottom-article">
                                         <ul class="meta-post">
@@ -212,6 +212,9 @@
                                 </div>
                             </div>
                         </article>
+                        <div v-show="articles.length == 0">
+                            <h3>Not found Data</h3>
+                        </div>
                         <div class="text-center" v-show="moreExists">
                             <button class="btn btn-sm btn-danger" v-on:click="getMostViewArticle"><span class="fa fa-arrow-down"></span>Load More...</button>
                         </div>
