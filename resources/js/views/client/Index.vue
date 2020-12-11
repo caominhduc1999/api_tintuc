@@ -304,10 +304,10 @@
                                         <p style="font-weight: bold">{{ article.title | stringLimit(50) }}</p>
                                         </router-link>
                                     </li>
-                                    <div v-show="moreExists">
-                                        <button class="btn btn-small btn-theme btn-rounded" style="color: white; " v-on:click="getHottestArticles"><span class="fa fa-arrow-down"></span>Load More</button>
-                                    </div>
                                 </ul>
+                                <div v-show="moreExists">
+                                    <button class="btn btn-small btn-theme btn-rounded" style="color: white; margin: 30px" v-on:click="getHottestArticles"><span class="fa fa-arrow-down"></span>Load More</button>
+                                </div>
                             </section>
                         </div>
                     </div>

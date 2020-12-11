@@ -52,3 +52,14 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::post('me', 'AuthController@me');
 
 });
+
+
+
+/*
+index: trả về danh sách - method: GET
+show: xem bản ghi (truyền id) - method: GET
+store: lưu bản ghi - method: POST
+update: cập nhật bản ghi (truyền id) - method: PUT/PATCH
+destroy: xóa bản ghi (truyền id) - method: DELETE
+search: tìm kiếm bản ghi (truyền data tìm kiếm) - method: POST
+*/
